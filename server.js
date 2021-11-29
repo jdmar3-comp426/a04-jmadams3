@@ -28,7 +28,8 @@ app.get("/app/", (req, res, next) => {
 // CREATE a new user (HTTP method POST) at endpoint /app/new/
 app.post("/app/new/", (req, res) => {	
 	const stmt = db.prepare("INSERT INTO userinfo (user, pass) VALUES (?, ?)").all();
-	res.status(200).json(stmt);
+	const info = stmt.run(req.body.user, req.body.pass);
+	res.status(201).json({"message": info.changes + " record created: ID " + info.lastInsertRowid});
 });
 // READ a list of all users (HTTP method GET) at endpoint /app/users/
 app.get("/app/users/", (req, res) => {	
@@ -37,22 +38,32 @@ app.get("/app/users/", (req, res) => {
 });
 
 // READ a single user (HTTP method GET) at endpoint /app/user/:id
-app.get("/app/user/:id", (req, res) => {	
+app.get("/app/user/", (req, res) => {	
 	const stmt = db.prepare("SELECT * FROM userinfo WHERE id = ?").all();
-	res.status(200).json(stmt);
+	const info = stmt.run(req.params.id);
+	res.status(202).json(stmt);
 });
 // UPDATE a single user (HTTP method PATCH) at endpoint /app/update/user/:id
-app.patch("/app/update/user/:id", (req, res) => {	
+app.patch("/app/update/user/", (req, res) => {	
 	const stmt = db.prepare("UPDATE userinfo SET user = COALESCE(?,user), pass = COALESCE(?,pass) WHERE id = ?").all();
-	res.status(200).json(stmt);
+	const info = stmt.run(req.params.id);
+	res.status(203).json({"message": info.changes + " record updated: user " + info.user});
 });
 // DELETE a single user (HTTP method DELETE) at endpoint /app/delete/user/:id
-app.delete("/app/delete/user/:id", (req, res) => {	
+app.delete("/app/delete/user/", (req, res) => {	
 	const stmt = db.prepare("DELETE FROM userinfo WHERE id = ?").all();
-	res.status(200).json(stmt);
+	const info = stmt.run(req.params.id);
+	res.status(204).json({"message": info.changes + " record deleted: " + info.user});
 });
 // Default response for any other request
 app.use(function(req, res){
 	res.json({"message":"Endpoint not found. (404)"});
     res.status(404);
 });
+
+//Tell STDOUT that the server is stopped
+process.on('SIGTERM', () => {
+	server.close(() => {
+		console.log('Server stopped')
+	})
+})
