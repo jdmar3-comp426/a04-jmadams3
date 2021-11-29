@@ -14,7 +14,7 @@ app.use(express.json());
 var HTTP_PORT = 5000;
 
 // Start server
-const server = app.listen(HTTP_PORT, () => {
+app.listen(HTTP_PORT, () => {
     console.log("Server running on port %PORT%".replace("%PORT%",HTTP_PORT))
 });
 // READ (HTTP method GET) at root endpoint /app/
@@ -59,6 +59,3 @@ app.use(function(req, res){
 	res.json({"message":"Endpoint not found. (404)"});
     res.status(404);
 });
-
-app.
-
