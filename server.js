@@ -41,19 +41,19 @@ app.get("/app/users/", (req, res) => {
 app.get("/app/user/:id", (req, res) => {	
 	const stmt = db.prepare("SELECT * FROM userinfo WHERE id = ?");
 	const info = stmt.run(req.params.id);
-	res.status(202).json(info);
+	res.status(200).json(info);
 });
 // UPDATE a single user (HTTP method PATCH) at endpoint /app/update/user/:id
 app.patch("/app/update/user/", (req, res) => {	
 	const stmt = db.prepare("UPDATE userinfo SET user = COALESCE(?,user), pass = COALESCE(?,pass) WHERE id = ?");
 	const info = stmt.run(req.params.id);
-	res.status(203).json({"message": info.changes + " record updated: user " + info.user});
+	res.status(200).json({"message": info.changes + " record updated: user " + info.user});
 });
 // DELETE a single user (HTTP method DELETE) at endpoint /app/delete/user/:id
 app.delete("/app/delete/user/", (req, res) => {	
 	const stmt = db.prepare("DELETE FROM userinfo WHERE id = ?");
 	const info = stmt.run(req.params.id);
-	res.status(204).json({"message": info.changes + " record deleted: " + info.user});
+	res.status(200).json({"message": info.changes + " record deleted: " + info.user});
 });
 // Default response for any other request
 app.use(function(req, res){
