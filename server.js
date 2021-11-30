@@ -7,7 +7,7 @@ var db = require('./database.js');
 var md5 = require("md5")
 
 // Make Express use its own built-in body parser
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Set server port
@@ -41,7 +41,7 @@ app.get("/app/users/", (req, res) => {
 // READ a single user (HTTP method GET) at endpoint /app/user/:id
 app.get("/app/user/:id", (req, res) => {	
 	const stmt = db.prepare("SELECT * FROM userinfo WHERE id = ?");
-	const info = stmt.run(req.params.id);
+	const info = stmt.get(req.params.id);
 	res.status(200).json(info);
 });
 // UPDATE a single user (HTTP method PATCH) at endpoint /app/update/user/:id
